@@ -64,7 +64,7 @@ A live-streaming platform where millions of **Gifts** and **Chat Messages** are 
 
 ### Sprint 4: The Product Layer (API & Caching)
 
-**Goal:** Make the data accessible to other SWAG services via an API.
+**Goal:** Make the data accessible to other services via an API.
 
 | Task | Description |
 |------|-------------|
