@@ -48,7 +48,7 @@ flowchart LR
     subgraph COLD["COLD PATH — source of truth"]
         AIRFLOW["Airflow<br/><i>idempotent DAGs</i>"]
         BRONZE["Bronze<br/><i>raw Parquet</i>"]
-        QG["Quality gate<br/><i>framework: ADR 0.6</i>"]
+        QG["Quality gate<br/><i>Great Expectations</i>"]
         SILVER["Silver<br/><i>validated</i>"]
         GOLD["Gold<br/><i>Delta Lake</i>"]
         MART["dbt + DuckDB<br/><i>marts</i>"]
@@ -136,7 +136,7 @@ Every row answers a question. If a technology does not answer one, it is not in 
   <td>How do batch jobs run idempotently, on schedule, with retries?</td>
 </tr>
 <tr>
-  <td><b>Quality gate</b><br/><sub>gates Silver promotion — framework decided in ADR 0.6</sub></td>
+  <td><b>Great Expectations</b><br/><sub>gates Silver promotion — ADR 0006</sub></td>
   <td>How does bad data get blocked before it reaches a business-facing table?</td>
 </tr>
 <tr><td colspan="2"><b>④ Serving, platform &amp; delivery</b> — <i>how anyone else consumes it</i></td></tr>
@@ -249,14 +249,13 @@ Sprint 4 branches off Sprint 1 rather than Sprint 3: it needs Kafka and MinIO an
       1 Hz per tool, and what happens at 30-day retention
 - [ ] **0.5** ADR: replication and consistency policy — RF, and the consistency level chosen per
       operation (write / point read / range read), with the verification method named up front
-- [ ] **0.6** ADR: quality-gate framework — Great Expectations vs Pandera. GE ships a validation
+- [x] **0.6** ADR: quality-gate framework — Great Expectations vs Pandera. GE ships a validation
       result store and publishable data docs, and costs a heavier runtime plus a larger config
       surface. Pandera validates in-process with no extra service to run, and produces no
       comparable docs artefact. Decide once, record what was traded away, and name the four places
       in this README the decision unblocks
 
-*0.4 and 0.5 get expensive to reverse once Sprint 4 has a cluster on disk; 0.6 blocks Sprint 3 and
-the four places in this README that currently read `quality gate`.*
+*0.4 and 0.5 get expensive to reverse once Sprint 4 has a cluster on disk.*
 
 ### ⬜ Sprint 1 — Walking skeleton · `connectivity`
 
@@ -283,7 +282,7 @@ the four places in this README that currently read `quality gate`.*
 
 - [ ] **3.1** Spark jobs: Bronze → Silver (validated, deduplicated) → Gold (Delta Lake)
 - [ ] **3.2** Airflow DAG: idempotent daily runs, catchup/backfill demonstrated on 7 days of history
-- [ ] **3.3** Quality-gate suites (framework per ADR 0.6) gate Silver promotion; failures block and alert
+- [ ] **3.3** Great Expectations suites (ADR 0006) gate Silver promotion; failures block and alert
 - [ ] **3.4** dbt + DuckDB models on Gold: daily tool-utilization mart with schema tests and generated docs
 
 ### ⬜ Sprint 4 — Stateful platform · `Kubernetes & high availability`
@@ -423,7 +422,7 @@ Four years of my production work run on managed GCP; this repo deliberately prov
 ├── batch/                       # Spark: Bronze → Silver → Gold           ─┐
 ├── dags/                        # Airflow DAGs                             │ cold path
 ├── dbt/                         # Gold marts, schema tests, docs           │
-├── quality/                     # validation suites (per ADR 0.6)         ─┘
+├── quality/                     # Great Expectations suites (ADR 0006)   ─┘
 ├── features/                    # Feast feature repo                      ─┐ serving
 ├── serving/                     # FastAPI + WebSocket                     ─┘
 ├── platform/helm/               # Helm charts: Cassandra + MinIO StatefulSets
